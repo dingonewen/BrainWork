@@ -30,12 +30,13 @@ This project presents a high-fidelity, interactive 3D visualization of human neu
 ---
 
 ### Functional Walkthrough (High-Res)
-[Download/Watch: Web Viewer Demo](./assets/Ding’s%20NeuroAtlas_demo.mp4)
+
+[![Ding's NeuroAtlas Functional Walkthrough](https://img.youtube.com/vi/aTEwc83XG-E/0.jpg)](https://www.youtube.com/watch?v=aTEwc83XG-E)
 
 > **Key Focus**: This video demonstrates the **Raycasting interaction** and the real-time anatomical labeling system.
 
 ### Full 360° Rotational Study
-[Download/Watch: Brain Rotation Demo](./assets/Brain_rotation_video.mp4)
+[![3D Slicer Brain Rotation Demo](https://youtu.be/KTlP8b01lwg)](https://youtu.be/KTlP8b01lwg)
 
 ---
 
