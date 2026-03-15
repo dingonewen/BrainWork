@@ -1,4 +1,4 @@
-# Ding's NeuroAtlas
+# Ding's NeuroAtlas | Academic Visualization
 ### An Interactive 3D Brain Mapping Project
 
 ---
@@ -18,23 +18,24 @@ This project presents a high-fidelity, interactive 3D visualization of human neu
 
 ## Interaction & Visual Demos
 
-### 1. Morphological Decomposition (Quick Preview)
+### Morphological Decomposition (Quick Preview)
 ![Ding's NeuroAtlas Demo](./assets/DingsNeuroAtlas.gif)
+
 *A 5-second loop demonstrating the radial explosion and mesh smoothing.*
 
 ---
 
-### 2. Functional Walkthrough (High-Res)
+### Functional Walkthrough (High-Res)
 [Download/Watch: Web Viewer Demo](./assets/Ding’s%20NeuroAtlas_demo.mp4)
 
 > **Key Focus**: This video demonstrates the **Raycasting interaction** and the real-time anatomical labeling system.
 
-### 3. Full 360° Rotational Study
+### Full 360° Rotational Study
 [Download/Watch: Brain Rotation Demo](./assets/Brain_rotation_video.mp4)
 
 ---
 
-## 🌐 Live Access
+## Project Live Access
 
 **[Launch Ding's NeuroAtlas (Web Version)](https://dingonewen.github.io/NeuroAtlas-Web/)**
 
@@ -53,7 +54,7 @@ MRI (DICOM)  →  NIfTI Volume  →  FreeSurfer / 3D Slicer Segmentation
 ### 1. Data Acquisition & Pre-processing
 
 - **Source Data:** High-resolution MRI scans in DICOM format.
-- **Format Conversion:** Utilizing `ratirат` and specialized scripts to convert raw slices into NIfTI volumes for downstream processing.
+- **Format Conversion:** Utilizing `ratirat` and specialized scripts to convert raw slices into NIfTI volumes for downstream processing.
 
 ### 2. Segmentation & Anatomical Modeling
 
@@ -62,7 +63,7 @@ MRI (DICOM)  →  NIfTI Volume  →  FreeSurfer / 3D Slicer Segmentation
 
 ### 3. Mesh Optimization & Refinement
 
-**Scripts:** `Extract_Brain_Parts.py` · `Pial_to_obj.py` · `Pack_and_smooth.py`
+**Scripts:** `Extract_brain_parts.py` · `Pial_to_obj.py` · `Pack_and_smooth.py`
 
 | Step | Description |
 |------|-------------|
