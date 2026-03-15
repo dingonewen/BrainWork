@@ -2,26 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Anatomy Atlas | Oystraz Digital Twin</title>
+    <title>Ding’s NeuroAtlas | Academic Visualization</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #050505; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; overflow: hidden; background: #040404; font-family: 'Segoe UI', Arial, sans-serif; }
+        
+        /* Interactive Control Panel */
         #ui-panel {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
-            padding: 20px; border-radius: 15px; color: white; text-align: center; border: 1px solid #444; z-index: 100;
-        }
-        #legend {
-            position: absolute; top: 20px; right: 20px; width: 220px;
-            background: rgba(0, 0, 0, 0.7); color: #ddd; padding: 15px;
-            border-radius: 10px; font-size: 13px; border-left: 4px solid #4facfe; z-index: 100;
-        }
-        .category { font-weight: bold; color: #4facfe; margin-top: 10px; display: block; }
-        #tooltip {
-            position: absolute; display: none; background: white; color: black;
-            padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 14px;
-            pointer-events: none; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(12px);
+            padding: 20px; border-radius: 12px; color: #fff; text-align: center; border: 1px solid #333; z-index: 100;
         }
         input[type=range] { width: 300px; cursor: pointer; }
+
+        /* Academic Anatomy Legend */
+        #legend {
+            position: absolute; top: 20px; right: 20px; width: 250px;
+            background: rgba(10, 10, 10, 0.7); color: #ccc; padding: 20px;
+            border-radius: 8px; font-size: 12px; border-left: 3px solid #4facfe; z-index: 100;
+            line-height: 1.6;
+        }
+        .legend-title { font-size: 16px; color: #fff; font-weight: bold; border-bottom: 1px solid #444; padding-bottom: 8px; margin-bottom: 10px; display: block; }
+        .category { font-weight: bold; color: #4facfe; margin-top: 12px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* HOVER TOOLTIP */
+        #tooltip {
+            position: absolute; display: none; background: rgba(255, 255, 255, 0.95); color: #000;
+            padding: 6px 14px; border-radius: 4px; font-weight: bold; font-size: 13px;
+            pointer-events: none; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            border: 1px solid #4facfe;
+        }
+
+        /* Copyright Notice Footer */
+        #copyright-footer {
+            position: absolute; bottom: 10px; right: 20px; color: rgba(255, 255, 255, 0.4);
+            font-size: 11px; text-align: right; pointer-events: none; line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -29,17 +44,36 @@
 <div id="tooltip"></div>
 
 <div id="legend">
-    <b style="font-size: 16px; color: white;">Anatomy Legend</b>
-    <span class="category">Core Nuclei</span> Thalamus, Caudate, Putamen
-    <span class="category">Limbic System</span> Hippocampus, Amygdala
-    <span class="category">Motor/Life</span> Cerebellum, Brain-Stem
-    <span class="category">Connective</span> Corpus Callosum
-    <span class="category">Glass Shell</span> Cerebral Cortex (Semi-Transparent)
+    <span class="legend-title">NeuroAnatomical Atlas</span>
+    
+    <span class="category">Cortical Surface (Shell)</span>
+    Telencephalic Pial Surface (Transparent)
+    
+    <span class="category">Diencephalon & Basal Ganglia</span>
+    Thalamus, Caudate, Putamen, Pallidus
+    
+    <span class="category">Limbic & Archicortex</span>
+    Hippocampus, Amygdala, Accumbens
+    
+    <span class="category">Metencephalon & Brainstem</span>
+    Cerebellum, Pons, Medulla Oblongata
+    
+    <span class="category">Commissural Pathways</span>
+    Corpus Callosum (Anterior/Posterior)
+    
+    <span class="category">Ventricular System</span>
+    Lateral/3rd/4th Ventricles (CSF)
 </div>
 
 <div id="ui-panel">
-    <div style="margin-bottom: 8px;">Explosion Factor: <span id="val">0</span>%</div>
+    <div style="margin-bottom: 8px; font-size: 14px; font-weight: 300;">MORPHOLOGICAL DECOMPOSITION: <span id="val" style="font-weight: bold; color: #4facfe;">0</span>%</div>
     <input type="range" id="slider" min="0" max="100" value="0">
+</div>
+
+<div id="copyright-footer">
+    <b>© 2026 Yiwen Ding. All Rights Reserved.</b><br>
+    Proprietary and Confidential. Unauthorized duplication,<br>
+    modification, or distribution is strictly prohibited.
 </div>
 
 <script type="importmap">
@@ -64,19 +98,22 @@
 
     function init() {
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-        camera.position.set(0, 150, 450);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 3000);
+        camera.position.set(0, 150, 500);
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(renderer.domElement);
 
-        // Bright Studio Lighting
-        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
-        const sun = new THREE.DirectionalLight(0xffffff, 2.0);
-        sun.position.set(100, 200, 100);
-        scene.add(sun);
+        // Advanced Studio Lighting
+        scene.add(new THREE.AmbientLight(0xffffff, 2.8)); 
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        keyLight.position.set(100, 200, 100);
+        scene.add(keyLight);
+        const rimLight = new THREE.DirectionalLight(0x4facfe, 1.2);
+        rimLight.position.set(-150, -100, -200);
+        scene.add(rimLight);
 
         controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
@@ -91,40 +128,35 @@
 
             brainGroup.traverse((child) => {
                 if (child.isMesh) {
-                    console.log("Checking Part:", child.name); // DEBUG: Look at names in F12 Console
-                    
                     child.userData.origPos = child.position.clone();
                     const pCenter = new THREE.Box3().setFromObject(child).getCenter(new THREE.Vector3());
                     child.userData.dir = new THREE.Vector3().subVectors(pCenter, center).normalize();
 
-                    // --- DETAILED MATERIAL RE-INJECTION ---
+                    // Selective Transparency Matching
                     const isShell = /(cortex|pial)/i.test(child.name) && !child.name.toLowerCase().includes('cerebellum');
                     
                     if (isShell) {
-                        // Creating a brand new material to avoid sharing with core parts
                         child.material = new THREE.MeshStandardMaterial({
-                            color: 0xcccccc,
+                            color: 0xeeeeee,
                             transparent: true,
                             opacity: 0.12,
-                            depthWrite: false, // Prevents shell from blocking depth of internal parts
+                            depthWrite: false, 
                             side: THREE.DoubleSide
                         });
                         child.userData.isShell = true;
-                        child.renderOrder = 1; // Render shell first/behind
                     } else {
-                        // Standardize core part materials
-                        const originalColor = child.material.color.clone();
+                        const hasVertexColors = child.geometry.attributes.color !== undefined;
                         child.material = new THREE.MeshStandardMaterial({
-                            color: originalColor,
+                            color: 0xffffff,
+                            vertexColors: hasVertexColors,
                             transparent: false,
                             opacity: 1.0,
                             metalness: 0.2,
-                            roughness: 0.6,
+                            roughness: 0.5,
                             emissive: new THREE.Color(0x000000),
                             emissiveIntensity: 0
                         });
                         child.userData.isShell = false;
-                        child.renderOrder = 2; // Render internals on top
                     }
                 }
             });
@@ -142,33 +174,27 @@
 
     function handleHover() {
         if (!brainGroup) return;
-
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(brainGroup.children, true);
 
-        // 1. Reset previous highlight
         if (hoveredObject) {
             hoveredObject.material.emissiveIntensity = 0;
             hoveredObject = null;
             tooltip.style.display = 'none';
         }
 
-        // 2. Optimized Selection Loop
         if (intersects.length > 0) {
             let target = null;
             for (let i = 0; i < intersects.length; i++) {
-                // SKIP any mesh marked as shell
-                if (intersects[i].object.userData.isShell === true) continue;
-                
+                if (intersects[i].object.userData.isShell) continue;
                 target = intersects[i].object;
-                break; // Found the first solid internal part
+                break;
             }
 
             if (target) {
                 hoveredObject = target;
-                hoveredObject.material.emissive.set(0x4facfe); // High-contrast blue
+                hoveredObject.material.emissive.set(0x4facfe); 
                 hoveredObject.material.emissiveIntensity = 1.0;
-                
                 tooltip.style.display = 'block';
                 tooltip.innerText = target.name.replace(/_/g, ' ');
             }
@@ -182,7 +208,6 @@
         renderer.render(scene, camera);
     }
 
-    // Explosion Logic
     document.getElementById('slider').addEventListener('input', (e) => {
         const val = e.target.value;
         document.getElementById('val').innerText = val;
