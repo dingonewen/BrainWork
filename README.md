@@ -36,7 +36,7 @@ This project presents a high-fidelity, interactive 3D visualization of human neu
 > **Key Focus**: This video demonstrates the **Raycasting interaction** and the real-time anatomical labeling system.
 
 ### Full 360° Rotational Study
-[![3D Slicer Brain Rotation Demo](https://youtu.be/KTlP8b01lwg)](https://youtu.be/KTlP8b01lwg)
+[![3D Slicer Brain Rotation Demo](https://img.youtube.com/vi/KTlP8b01lwg/0.jpg)](https://youtu.be/KTlP8b01lwg)
 
 ---
 
