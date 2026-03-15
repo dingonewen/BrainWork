@@ -16,22 +16,29 @@ This project presents a high-fidelity, interactive 3D visualization of human neu
 | **Developer** | Yiwen Ding |
 | **License** | Proprietary (Personal Use Only) |
 
-## Demo
+## Interaction & Visual Demos
 
-### Web Viewer Screenshot
+### 1. Morphological Decomposition (Quick Preview)
+![Ding's NeuroAtlas Demo](./assets/DingsNeuroAtlas.gif)
+*A 5-second loop demonstrating the radial explosion and mesh smoothing.*
 
-<video src="assets/Ding’s NeuroAtlas_demo.mp4" controls width="80%">
-  <a href="assets/Ding’s NeuroAtlas_demo.mp4">Download Ding's NeuroAtlas Demo (MP4)</a>
-</video>
+---
 
-### Brain Rotation Demo
+### 2. Functional Walkthrough (High-Res)
+[Download/Watch: Web Viewer Demo](./assets/Ding’s%20NeuroAtlas_demo.mp4)
 
-<video src="assets/Brain_rotation_video.mp4" controls width="100%">
-  <a href="assets/Brain_rotation_video.mp4">Download Brain Rotation Demo (MP4)</a>
-</video>
+> **Key Focus**: This video demonstrates the **Raycasting interaction** and the real-time anatomical labeling system.
 
-> **[→ Open Web Demo](index.html)** — Open `index.html` in a local server to launch the interactive 3D viewer.
+### 3. Full 360° Rotational Study
+[Download/Watch: Brain Rotation Demo](./assets/Brain_rotation_video.mp4)
 
+---
+
+## 🌐 Live Access
+
+**[Launch Ding's NeuroAtlas (Web Version)](https://dingonewen.github.io/NeuroAtlas-Web/)**
+
+*Note: For the best experience, please use a WebGL-compatible browser (Chrome/Edge/Safari). The interface is optimized for desktop interaction.*
 ---
 
 ## Technical Pipeline: From Voxel to Mesh
