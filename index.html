@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Brain Atlas</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050505; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #ui-container {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            padding: 20px; border-radius: 20px; color: white; text-align: center; border: 1px solid rgba(255,255,255,0.1);
+        }
+        #legend {
+            position: absolute; top: 20px; right: 20px; width: 220px;
+            background: rgba(0, 0, 0, 0.6); color: #ddd; padding: 15px;
+            border-radius: 10px; font-size: 13px; border-left: 4px solid #4facfe;
+        }
+        .category { font-weight: bold; color: #4facfe; margin-top: 10px; display: block; }
+        input[type=range] { width: 300px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="legend">
+    <b style="font-size: 16px; color: white;">Anatomy Legend</b>
+    <span class="category">Core Nuclei</span> Thalamus, Caudate, Putamen
+    <span class="category">Limbic</span> Hippocampus, Amygdala
+    <span class="category">Motor</span> Cerebellum, Brain-Stem
+    <span class="category">Communication</span> Corpus Callosum
+    <span class="category">Ventricular</span> Lateral Ventricles
+</div>
+
+<div id="ui-container">
+    <div style="margin-bottom: 10px; font-size: 18px; letter-spacing: 1px;">Explosion Factor: <span id="val">0</span>%</div>
+    <input type="range" id="slider" min="0" max="100" value="0">
+</div>
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    let scene, camera, renderer, controls, brainGroup;
+
+    function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
+        
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // --- ENHANCED BRIGHT LIGHTING ---
+        scene.add(new THREE.AmbientLight(0xffffff, 2.5)); // High ambient fill
+        const mainLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        mainLight.position.set(200, 200, 200);
+        scene.add(mainLight);
+        const backLight = new THREE.DirectionalLight(0x4facfe, 1.5); // Cinematic blue backlight
+        backLight.position.set(-200, -100, -200);
+        scene.add(backLight);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        const loader = new GLTFLoader();
+        loader.load('./Brain_Parts.glb', (gltf) => {
+            brainGroup = gltf.scene;
+            scene.add(brainGroup);
+
+            const box = new THREE.Box3().setFromObject(brainGroup);
+            const center = new THREE.Vector3();
+            const size = new THREE.Vector3();
+            box.getCenter(center);
+            box.getSize(size);
+
+            brainGroup.position.sub(center);
+            camera.position.set(0, 150, size.z * 3);
+            controls.target.set(0, 0, 0);
+
+            brainGroup.traverse((child) => {
+                if (child.isMesh) {
+                    child.userData.origPos = child.position.clone();
+                    const pCenter = new THREE.Vector3();
+                    new THREE.Box3().setFromObject(child).getCenter(pCenter);
+                    child.userData.dir = new THREE.Vector3().subVectors(pCenter, center).normalize();
+                    
+                    // --- MATERIAL POLISH ---
+                    child.material.metalness = 0.2;
+                    child.material.roughness = 0.4;
+                    // If this is the Cortex (not currently in your GLB but for future use)
+                    if (child.name.includes("Cortex") && !child.name.includes("Cerebellum")) {
+                        child.material.transparent = true;
+                        child.material.opacity = 0.25; // Glass effect
+                    }
+                }
+            });
+        });
+
+        animate();
+    }
+
+    document.getElementById('slider').addEventListener('input', (e) => {
+        const val = e.target.value;
+        document.getElementById('val').innerText = val;
+        if (!brainGroup) return;
+        const k = val * 1.5; 
+        brainGroup.traverse((child) => {
+            if (child.isMesh && child.userData.origPos) {
+                const move = child.userData.dir.clone().multiplyScalar(k);
+                child.position.copy(child.userData.origPos).add(move);
+            }
+        });
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if(controls) controls.update();
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    init();
+</script>
+</body>
+</html>
