@@ -3,34 +3,34 @@ import numpy as np
 from skimage import measure
 import os
 
-# --- 配置路径 ---
-# 假设你已经把 brain_work 剪切到了 Windows 桌面
-input_file = r'C:\Users\miadi\OneDrive - PennO365\Desktop\Ding\Study\Models\brain_work\MyBrain_V1\mri\aseg.mgz'
-output_dir = r'C:\Users\miadi\OneDrive - PennO365\Desktop\Ding\Study\Models\Brain_Parts_OBJ' 
+# --- Configure paths ---
+# Assumes brain_work has been moved to the Windows desktop
+input_file = r'C:\Users\...\MyBrain_V1\mri\aseg.mgz'
+output_dir = r'C:\Users\...\Brain_Parts_OBJ'
 
 
-# 核心标签对照表 (FreeSurfer Standard LUT)
-# 你可以根据需要添加更多 ID
+# Core label lookup table (FreeSurfer Standard LUT)
+# Additional label IDs can be appended as needed
 BRAIN_LABELS = {
-    # 左侧深层核团
-    10: "Left-Thalamus", 11: "Left-Caudate", 12: "Left-Putamen", 
-    13: "Left-Pallidum", 17: "Left-Hippocampus", 18: "Left-Amygdala", 
+    # Left-hemisphere deep nuclei
+    10: "Left-Thalamus", 11: "Left-Caudate", 12: "Left-Putamen",
+    13: "Left-Pallidum", 17: "Left-Hippocampus", 18: "Left-Amygdala",
     26: "Left-Accumbens-area", 28: "Left-VentralDC",
-    # 右侧深层核团
-    49: "Right-Thalamus", 50: "Right-Caudate", 51: "Right-Putamen", 
-    52: "Right-Pallidum", 53: "Right-Hippocampus", 54: "Right-Amygdala", 
+    # Right-hemisphere deep nuclei
+    49: "Right-Thalamus", 50: "Right-Caudate", 51: "Right-Putamen",
+    52: "Right-Pallidum", 53: "Right-Hippocampus", 54: "Right-Amygdala",
     58: "Right-Accumbens-area", 60: "Right-VentralDC",
-    # 小脑与脑干
+    # Cerebellum and brainstem
     7:  "Left-Cerebellum-White-Matter", 8: "Left-Cerebellum-Cortex",
     46: "Right-Cerebellum-White-Matter", 47: "Right-Cerebellum-Cortex",
     16: "Brain-Stem",
-    # 胼胝体 (Corpus Callosum - 连接左右脑的桥梁)
-    251: "CC_Posterior", 252: "CC_Mid_Posterior", 253: "CC_Central", 
+    # Corpus Callosum (the commissural bridge connecting the two hemispheres)
+    251: "CC_Posterior", 252: "CC_Mid_Posterior", 253: "CC_Central",
     254: "CC_Mid_Anterior", 255: "CC_Anterior",
-    # 脑室系统 (Ventricles)
+    # Ventricular system
     4:  "Left-Lateral-Ventricle", 43: "Right-Lateral-Ventricle",
     14: "3rd-Ventricle", 15: "4th-Ventricle",
-    # 其他细微结构
+    # Other fine structures
     85: "Optic-Chiasm"
 }
 
@@ -46,37 +46,37 @@ def run_extraction():
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    print(f"正在加载数据: {input_file} ...")
+    print(f"Loading data: {input_file} ...")
     img = nib.load(input_file)
     data = img.get_fdata()
-    affine = img.affine  # 获取坐标变换矩阵
+    affine = img.affine  # Retrieve the voxel-to-world coordinate transform matrix
 
     for label_id, label_name in BRAIN_LABELS.items():
-        print(f"正在提取: {label_name} (ID: {label_id})...")
-        
-        # 1. 创建二值掩码 (Binary Mask)
+        print(f"Extracting: {label_name} (ID: {label_id})...")
+
+        # 1. Create a binary mask for the current label
         binary_mask = np.where(data == label_id, 1, 0)
-        
+
         if np.sum(binary_mask) == 0:
-            print(f"跳过: {label_name} (未在数据中发现)")
+            print(f"Skipping: {label_name} (not found in data)")
             continue
 
-        # 2. 运行 Marching Cubes 算法生成网格
-        # level=0.5 是二值数据的标准阈值
+        # 2. Run Marching Cubes to generate a surface mesh
+        # level=0.5 is the standard iso-surface threshold for binary data
         verts, faces, normals, values = measure.marching_cubes(binary_mask, level=0.5)
 
-        # 3. 关键步：将体素坐标转换为实际的物理空间坐标 (RAS)
-        # 这是为了确保所有零件最后能拼在一起
-        # 这里的变换逻辑是 v_real = Affine * v_voxel
+        # 3. Key step: transform voxel coordinates into physical RAS space
+        # This ensures all parts can be correctly reassembled in world space.
+        # The transform is: v_real = Affine * v_voxel
         verts_phys = np.c_[verts, np.ones(verts.shape[0])] @ affine.T
         verts_phys = verts_phys[:, :3]
 
-        # 4. 保存为 OBJ
+        # 4. Save as OBJ
         obj_name = os.path.join(output_dir, f"{label_name}.obj")
         export_obj(verts_phys, faces, obj_name)
 
-    print(f"\n--- [成功] ---")
-    print(f"所有零件已保存至: {output_dir}")
+    print(f"\n--- [Done] ---")
+    print(f"All parts saved to: {output_dir}")
 
 if __name__ == "__main__":
     run_extraction()
