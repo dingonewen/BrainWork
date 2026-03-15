@@ -118,7 +118,7 @@
         controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
-        new GLTFLoader().load('./Brain_Parts.glb', (gltf) => {
+        new GLTFLoader().load('./assets/Brain_Parts.glb', (gltf) => {
             brainGroup = gltf.scene;
             scene.add(brainGroup);
 
