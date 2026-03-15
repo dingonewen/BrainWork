@@ -1,5 +1,5 @@
 # Ding's NeuroAtlas | Academic Visualization
-### An Interactive 3D Brain Mapping Project
+### 🚀 An Interactive 3D Brain Mapping Project
 
 ---
 
@@ -21,7 +21,7 @@ This project presents a high-fidelity, interactive 3D visualization of human neu
 ### Morphological Decomposition (Quick Preview)
 ![Ding's NeuroAtlas Demo](./assets/DingsNeuroAtlas.gif)
 
-*A 5-second loop demonstrating the radial explosion and mesh smoothing.*
+*A 15-second loop demonstrating the radial explosion and mesh smoothing.*
 
 ---
 
@@ -35,11 +35,12 @@ This project presents a high-fidelity, interactive 3D visualization of human neu
 
 ---
 
-## Project Live Access
+## 🌐 Project Live Access
 
 **[Launch Ding's NeuroAtlas (Web Version)](https://dingonewen.github.io/NeuroAtlas-Web/)**
 
-*Note: For the best experience, please use a WebGL-compatible browser (Chrome/Edge/Safari). The interface is optimized for desktop interaction.*
+> For the best experience, please use a WebGL-compatible browser (Chrome/Edge/Safari). The interface is optimized for desktop interaction.
+
 ---
 
 ## Technical Pipeline: From Voxel to Mesh
