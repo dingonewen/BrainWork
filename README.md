@@ -1,5 +1,9 @@
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=250&section=header&text=Ding's%20NeuroAtlas&fontSize=80&animation=fadeIn&fontAlignY=35" />
+</div>
+
 # Ding's NeuroAtlas | Academic Visualization
-### 🚀 An Interactive 3D Brain Mapping Project
+###  An Interactive 3D NeuroAnatomical Digital Twin 🧠
 
 ---
 
